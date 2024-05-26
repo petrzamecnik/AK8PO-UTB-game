@@ -12,15 +12,16 @@ config_version=5
 
 config/name="AK8PO-UTB-game"
 run/main_scene="res://Scenes/Main.tscn"
-config/features=PackedStringArray("4.2", "Mobile")
+config/features=PackedStringArray("4.2", "C#", "Mobile")
 config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=640
-window/size/viewport_height=960
-window/stretch/mode="viewport"
-window/stretch/scale=2.0
+window/size/viewport_width=320
+window/size/viewport_height=640
+window/size/mode=2
+window/stretch/mode="canvas_items"
+window/stretch/scale_mode="integer"
 window/handheld/orientation=1
 
 [dotnet]

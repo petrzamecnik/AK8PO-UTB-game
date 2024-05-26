@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://hy8tb6hgb5q2"]
+[gd_scene load_steps=11 format=3 uid="uid://hy8tb6hgb5q2"]
 
 [ext_resource type="Texture2D" uid="uid://xpabkc0jye1o" path="res://Sprites/AnimationSheet_Character.png" id="1_lygn0"]
+[ext_resource type="Script" path="res://Scripts/Player_Controller.cs" id="1_ourvt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_il0ot"]
 atlas = ExtResource("1_lygn0")
@@ -63,6 +64,7 @@ height = 28.0
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 position = Vector2(16, 16)
+script = ExtResource("1_ourvt")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_o644v")
