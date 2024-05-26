@@ -1,0 +1,74 @@
+[gd_scene load_steps=10 format=3 uid="uid://hy8tb6hgb5q2"]
+
+[ext_resource type="Texture2D" uid="uid://xpabkc0jye1o" path="res://Sprites/AnimationSheet_Character.png" id="1_lygn0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_il0ot"]
+atlas = ExtResource("1_lygn0")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0lrdl"]
+atlas = ExtResource("1_lygn0")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tac8v"]
+atlas = ExtResource("1_lygn0")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8mg0x"]
+atlas = ExtResource("1_lygn0")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4k81t"]
+atlas = ExtResource("1_lygn0")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4seim"]
+atlas = ExtResource("1_lygn0")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o644v"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_il0ot")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0lrdl")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tac8v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8mg0x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4k81t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4seim")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 10.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g11id"]
+radius = 8.0
+height = 28.0
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+position = Vector2(16, 16)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_o644v")
+animation = &"Idle"
+frame_progress = 0.0229996
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 2)
+shape = SubResource("CapsuleShape2D_g11id")
