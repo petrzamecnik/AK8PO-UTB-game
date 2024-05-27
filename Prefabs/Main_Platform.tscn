@@ -2,6 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://dhw23heptlji" path="res://Sprites/Dungeon Tile Set.png" id="1_r37da"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lhpuy"]
+size = Vector2(320, 32)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rolpr"]
 texture = ExtResource("1_r37da")
 1:1/0 = 0
@@ -141,18 +144,15 @@ texture = ExtResource("1_r37da")
 [sub_resource type="TileSet" id="TileSet_4tlno"]
 sources/0 = SubResource("TileSetAtlasSource_rolpr")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lhpuy"]
-size = Vector2(320, 32)
-
 [node name="MainPlatform" type="Node2D"]
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(160, 16)
+shape = SubResource("RectangleShape2D_lhpuy")
+
+[node name="TileMap" type="TileMap" parent="StaticBody2D"]
 tile_set = SubResource("TileSet_4tlno")
 format = 2
 layer_0/tile_data = PackedInt32Array(0, 131072, 1, 1, 131072, 1, 2, 131072, 1, 3, 131072, 1, 4, 131072, 1, 5, 131072, 1, 6, 131072, 1, 7, 131072, 1, 8, 131072, 1, 9, 131072, 1, 10, 131072, 1, 11, 131072, 1, 65547, 131072, 2, 65536, 327680, 2, 65537, 131072, 2, 65538, 131072, 2, 65539, 131072, 2, 65540, 131072, 2, 65541, 131072, 2, 65542, 131072, 2, 65543, 131072, 2, 65544, 131072, 2, 65545, 131072, 2, 65546, 131072, 2, 12, 131072, 1, 13, 131072, 1, 14, 131072, 1, 15, 131072, 1, 65551, 131072, 2, 65550, 131072, 2, 65549, 131072, 2, 65548, 131072, 2, 16, 131072, 1, 17, 131072, 1, 18, 131072, 1, 19, 131072, 1, 65555, 393216, 2, 65554, 131072, 2, 65553, 131072, 2, 65552, 131072, 2)
-
-[node name="Area2D" type="Area2D" parent="TileMap"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/Area2D"]
-position = Vector2(160, 16)
-shape = SubResource("RectangleShape2D_lhpuy")

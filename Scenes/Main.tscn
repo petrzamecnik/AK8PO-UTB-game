@@ -6,7 +6,7 @@
 [node name="Node2D" type="Node2D"]
 
 [node name="CharacterBody2D" parent="." instance=ExtResource("1_dxgug")]
-position = Vector2(103, 488)
+position = Vector2(72, 563)
 
 [node name="MainPlatform" parent="." instance=ExtResource("2_rshns")]
 position = Vector2(0, 600)
