@@ -1,7 +1,8 @@
 using Godot;
 using System;
 
-public partial class Player_Controller : CharacterBody2D
+// ReSharper disable once CheckNamespace
+public partial class PlayerController : CharacterBody2D
 {
     private float _speed = 100.0f;
     private float _jumpSpeed = -400.0f;
@@ -34,7 +35,6 @@ public partial class Player_Controller : CharacterBody2D
         HandleJump(ref velocity);
 
         HandleAnimation(velocity);
-        AdjustCollisionShape();
 
         Velocity = velocity; // applies updated velocity to the character
         MoveAndSlide();
@@ -93,12 +93,5 @@ public partial class Player_Controller : CharacterBody2D
         {
             velocity.Y = _jumpSpeed;
         }
-    }
-
-    private void AdjustCollisionShape()
-    {
-        _collisionShape.Position = _facingRight
-            ? new Vector2(Math.Abs(_collisionShape.Position.X), _collisionShape.Position.Y)
-            : new Vector2(-Math.Abs(_collisionShape.Position.X), _collisionShape.Position.Y);
     }
 }

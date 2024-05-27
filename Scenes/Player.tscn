@@ -1,7 +1,7 @@
 [gd_scene load_steps=32 format=3 uid="uid://b2mqqhud0onav"]
 
+[ext_resource type="Script" path="res://Scripts/PlayerController.cs" id="1_cj0f7"]
 [ext_resource type="Texture2D" uid="uid://xpabkc0jye1o" path="res://Sprites/AnimationSheet_Character.png" id="1_lygn0"]
-[ext_resource type="Script" path="res://Scripts/Player_Controller.cs" id="1_ourvt"]
 [ext_resource type="Texture2D" uid="uid://d21rg1ytscc6d" path="res://Sprites/Character_Sheet_Right.png" id="4_kyjn6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8ddp0"]
@@ -215,7 +215,7 @@ height = 28.0
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 position = Vector2(16, 16)
-script = ExtResource("1_ourvt")
+script = ExtResource("1_cj0f7")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_o644v")
