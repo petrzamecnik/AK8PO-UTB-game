@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bxrkx0eawosbw"]
+[gd_scene load_steps=6 format=3 uid="uid://bxrkx0eawosbw"]
 
 [ext_resource type="PackedScene" uid="uid://b2mqqhud0onav" path="res://Scenes/Player.tscn" id="1_dxgug"]
 [ext_resource type="PackedScene" uid="uid://c6txqp8pb6nlf" path="res://Prefabs/Main_Platform.tscn" id="2_rshns"]
+[ext_resource type="PackedScene" uid="uid://v6dxyrnjf0sq" path="res://Scenes/Left_Wall.tscn" id="3_4875l"]
+[ext_resource type="PackedScene" uid="uid://d1vk1nqo4va46" path="res://Scenes/Right_Wall.tscn" id="4_fbbj1"]
+[ext_resource type="PackedScene" uid="uid://dq1l1v7rrux67" path="res://Scenes/Background.tscn" id="5_plh2s"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -9,4 +12,13 @@
 position = Vector2(72, 563)
 
 [node name="MainPlatform" parent="." instance=ExtResource("2_rshns")]
-position = Vector2(0, 600)
+position = Vector2(0, 608)
+
+[node name="Left_Wall" parent="." instance=ExtResource("3_4875l")]
+z_index = -1
+
+[node name="Right_Wall" parent="." instance=ExtResource("4_fbbj1")]
+z_index = -1
+
+[node name="Background" parent="." instance=ExtResource("5_plh2s")]
+z_index = -9
