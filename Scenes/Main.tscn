@@ -1,10 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://bxrkx0eawosbw"]
+[gd_scene load_steps=7 format=3 uid="uid://bxrkx0eawosbw"]
 
 [ext_resource type="PackedScene" uid="uid://b2mqqhud0onav" path="res://Scenes/Player.tscn" id="1_dxgug"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_nph22"]
 [ext_resource type="PackedScene" uid="uid://c6txqp8pb6nlf" path="res://Prefabs/Main_Platform.tscn" id="2_rshns"]
-[ext_resource type="PackedScene" uid="uid://v6dxyrnjf0sq" path="res://Scenes/Left_Wall.tscn" id="3_4875l"]
-[ext_resource type="PackedScene" uid="uid://d1vk1nqo4va46" path="res://Scenes/Right_Wall.tscn" id="4_fbbj1"]
 [ext_resource type="Texture2D" uid="uid://dhw23heptlji" path="res://Sprites/Dungeon Tile Set.png" id="6_x56ig"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_48288"]
@@ -149,20 +147,18 @@ sources/0 = SubResource("TileSetAtlasSource_48288")
 [node name="Game" type="Node2D"]
 script = ExtResource("1_nph22")
 
-[node name="CharacterBody2D" parent="." instance=ExtResource("1_dxgug")]
+[node name="BackgroundTileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_jlm7s")
+format = 2
+
+[node name="WallTileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_jlm7s")
+format = 2
+
+[node name="Player" parent="." instance=ExtResource("1_dxgug")]
 position = Vector2(72, 563)
 
 [node name="Terrain" type="Node2D" parent="."]
 
 [node name="MainPlatform" parent="Terrain" instance=ExtResource("2_rshns")]
 position = Vector2(0, 608)
-
-[node name="Left_Wall" parent="Terrain" instance=ExtResource("3_4875l")]
-z_index = -1
-
-[node name="Right_Wall" parent="Terrain" instance=ExtResource("4_fbbj1")]
-z_index = -1
-
-[node name="TerrainTileSet" type="TileMap" parent="Terrain"]
-tile_set = SubResource("TileSet_jlm7s")
-format = 2
