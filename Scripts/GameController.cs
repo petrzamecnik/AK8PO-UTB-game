@@ -53,12 +53,17 @@ public partial class GameController : Node
         _wallTileMap = GetNode<TileMap>("WallTileMap");
         _player = GetNode<CharacterBody2D>("Player");
 
+        _backgroundTileMap.ZIndex = BackgroundLayer;
+        _wallTileMap.ZIndex = WallLayer;
+
         GenerateInitialTiles();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+
+        UpdateTiles();
     }
 
     private void UpdateTiles()
@@ -74,7 +79,7 @@ public partial class GameController : Node
             _highestYGenerated = newHighestY;
         }
 
-        if (playerY < _highestYGenerated + _tileBuffer)
+        if (playerY < _lowestYGenerated + _tileBuffer)
         {
             var newLowestY = _lowestYGenerated - _tileBuffer;
             GenerateBackground(0, 20, newLowestY, _lowestYGenerated);
@@ -83,10 +88,9 @@ public partial class GameController : Node
             _lowestYGenerated = newLowestY;
         }
 
-        RemoveTilesAbove(playerY + _tileBuffer * 2);
-        RemoveTilesBelow(playerY - _tileBuffer * 2);
+        // RemoveTilesAbove(playerY + _tileBuffer * 2);
+        // RemoveTilesBelow(playerY - _tileBuffer * 2);
     }
-
 
     private void GenerateInitialTiles()
     {
@@ -135,12 +139,13 @@ public partial class GameController : Node
         {
             for (var y = aboveY; y < _highestYGenerated; y++)
             {
-                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), -1);
-                _wallTileMap.SetCell(WallLayer, new Vector2I(x, y), -1);
+                if (y > _highestYGenerated - _tileBuffer * 2)
+                {
+                    _backgroundTileMap.SetCell(0, new Vector2I(x, y), -1);
+                    _wallTileMap.SetCell(0, new Vector2I(x, y), -1);
+                }
             }
         }
-
-        _highestYGenerated = aboveY;
     }
 
     private void RemoveTilesBelow(int belowY)
@@ -149,11 +154,12 @@ public partial class GameController : Node
         {
             for (var y = _lowestYGenerated; y < belowY; y++)
             {
-                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), -1);
-                _wallTileMap.SetCell(WallLayer, new Vector2I(x, y), -1);
+                if (y < _lowestYGenerated + _tileBuffer * 2)
+                {
+                    _backgroundTileMap.SetCell(0, new Vector2I(x, y), -1);
+                    _wallTileMap.SetCell(0, new Vector2I(x, y), -1);
+                }
             }
         }
-
-        _lowestYGenerated = belowY;
     }
 }
