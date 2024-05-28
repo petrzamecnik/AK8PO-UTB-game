@@ -68,6 +68,7 @@ public partial class GameController : Node
 
     private void UpdateTiles()
     {
+        // TODO: rework this function
         var playerY = (int)_player.GlobalPosition.Y;
 
         if (playerY > _highestYGenerated - _tileBuffer)
@@ -88,8 +89,8 @@ public partial class GameController : Node
             _lowestYGenerated = newLowestY;
         }
 
-        // RemoveTilesAbove(playerY + _tileBuffer * 2);
-        // RemoveTilesBelow(playerY - _tileBuffer * 2);
+        RemoveTilesAbove(playerY + _tileBuffer * 2);
+        RemoveTilesBelow(playerY - _tileBuffer * 2);
     }
 
     private void GenerateInitialTiles()
@@ -135,6 +136,9 @@ public partial class GameController : Node
 
     private void RemoveTilesAbove(int aboveY)
     {
+        // TODO: rework this function
+
+        
         for (var x = 0; x < 20; x++)
         {
             for (var y = aboveY; y < _highestYGenerated; y++)
@@ -150,6 +154,9 @@ public partial class GameController : Node
 
     private void RemoveTilesBelow(int belowY)
     {
+        // TODO: rework this function
+
+        
         for (var x = 0; x < 20; x++)
         {
             for (var y = _lowestYGenerated; y < belowY; y++)
