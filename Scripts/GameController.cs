@@ -8,6 +8,7 @@ public partial class GameController : Node
     private TileMap _wallTileMap;
     private RandomNumberGenerator _rng = new RandomNumberGenerator();
     private CharacterBody2D _player;
+    
 
     private int _tileBuffer = 20;
     private int _lowestYGenerated = 0;
@@ -62,35 +63,12 @@ public partial class GameController : Node
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-
         UpdateTiles();
     }
 
     private void UpdateTiles()
     {
-        // TODO: rework this function
-        var playerY = (int)_player.GlobalPosition.Y;
-
-        if (playerY > _highestYGenerated - _tileBuffer)
-        {
-            var newHighestY = _highestYGenerated + _tileBuffer;
-            GenerateBackground(0, 20, _highestYGenerated, newHighestY);
-            GenerateLeftWall(_highestYGenerated, newHighestY);
-            GenerateRightWall(_highestYGenerated, newHighestY);
-            _highestYGenerated = newHighestY;
-        }
-
-        if (playerY < _lowestYGenerated + _tileBuffer)
-        {
-            var newLowestY = _lowestYGenerated - _tileBuffer;
-            GenerateBackground(0, 20, newLowestY, _lowestYGenerated);
-            GenerateLeftWall(newLowestY, _lowestYGenerated);
-            GenerateRightWall(newLowestY, _lowestYGenerated);
-            _lowestYGenerated = newLowestY;
-        }
-
-        RemoveTilesAbove(playerY + _tileBuffer * 2);
-        RemoveTilesBelow(playerY - _tileBuffer * 2);
+       
     }
 
     private void GenerateInitialTiles()
@@ -136,37 +114,14 @@ public partial class GameController : Node
 
     private void RemoveTilesAbove(int aboveY)
     {
-        // TODO: rework this function
 
         
-        for (var x = 0; x < 20; x++)
-        {
-            for (var y = aboveY; y < _highestYGenerated; y++)
-            {
-                if (y > _highestYGenerated - _tileBuffer * 2)
-                {
-                    _backgroundTileMap.SetCell(0, new Vector2I(x, y), -1);
-                    _wallTileMap.SetCell(0, new Vector2I(x, y), -1);
-                }
-            }
-        }
+      
     }
 
     private void RemoveTilesBelow(int belowY)
     {
-        // TODO: rework this function
 
         
-        for (var x = 0; x < 20; x++)
-        {
-            for (var y = _lowestYGenerated; y < belowY; y++)
-            {
-                if (y < _lowestYGenerated + _tileBuffer * 2)
-                {
-                    _backgroundTileMap.SetCell(0, new Vector2I(x, y), -1);
-                    _wallTileMap.SetCell(0, new Vector2I(x, y), -1);
-                }
-            }
-        }
     }
 }

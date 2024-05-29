@@ -1,7 +1,8 @@
-[gd_scene load_steps=32 format=3 uid="uid://b2mqqhud0onav"]
+[gd_scene load_steps=33 format=3 uid="uid://b2mqqhud0onav"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerController.cs" id="1_cj0f7"]
 [ext_resource type="Texture2D" uid="uid://xpabkc0jye1o" path="res://Sprites/AnimationSheet_Character.png" id="1_lygn0"]
+[ext_resource type="Script" path="res://Scripts/CameraController.cs" id="4_4n2t4"]
 [ext_resource type="Texture2D" uid="uid://d21rg1ytscc6d" path="res://Sprites/Character_Sheet_Right.png" id="4_kyjn6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8ddp0"]
@@ -224,3 +225,6 @@ animation = &"Die"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 2)
 shape = SubResource("CapsuleShape2D_g11id")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("4_4n2t4")

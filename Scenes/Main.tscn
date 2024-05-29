@@ -425,7 +425,7 @@ tile_set = SubResource("TileSet_jlm7s")
 format = 2
 
 [node name="Player" parent="." instance=ExtResource("1_dxgug")]
-position = Vector2(72, 563)
+position = Vector2(160, 586)
 
 [node name="Terrain" type="Node2D" parent="."]
 
