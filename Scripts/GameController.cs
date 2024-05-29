@@ -4,20 +4,12 @@ using System.Collections.Generic;
 
 public partial class GameController : Node
 {
-    private TileMap _backgroundTileMap;
-    private TileMap _wallTileMap;
-    private RandomNumberGenerator _rng = new RandomNumberGenerator();
-    private CharacterBody2D _player;
-    
-
-    private int _tileBuffer = 20;
-    private int _lowestYGenerated = 0;
-    private int _highestYGenerated = 40;
-
     private const int BackgroundLayer = -1;
     private const int WallLayer = 0;
+    private const int CellSize = 16;
+    private const int StartingPlatformHeight = 3;
 
-    private readonly List<Vector2I> _tileCoords = new List<Vector2I>
+    private readonly List<Vector2I> _backgroundTileCoords = new List<Vector2I>
     {
         new Vector2I(6, 6),
         new Vector2I(6, 7),
@@ -45,6 +37,21 @@ public partial class GameController : Node
 
     private readonly Vector2I _leftWallAtlasCoords = new Vector2I(3, 6);
     private readonly Vector2I _rightWallAtlasCoords = new Vector2I(1, 6);
+    
+    private readonly Vector2I _groundTileAtlasCoord = new Vector2I(2, 1);
+    private readonly Vector2I _groundTileAtlasCoord2 = new Vector2I(2, 5);
+    private readonly Vector2I _groundTileAtlasCoord3 = new Vector2I(2, 2);
+
+
+    private TileMap _backgroundTileMap;
+    private TileMap _wallTileMap;
+    private RandomNumberGenerator _rng = new RandomNumberGenerator();
+    private CharacterBody2D _player;
+
+    private int _leftBoundary = -20;
+    private int _rightBoundary = 20;
+    private int _topBoundary = 20;
+    private int _bottomBoundary = 0;
 
 
     // Called when the node enters the scene tree for the first time.
@@ -56,72 +63,36 @@ public partial class GameController : Node
 
         _backgroundTileMap.ZIndex = BackgroundLayer;
         _wallTileMap.ZIndex = WallLayer;
+        
 
-        GenerateInitialTiles();
+        GenerateStartingPlatform();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-        UpdateTiles();
+        var playerPosition = _player.GlobalPosition;
     }
 
-    private void UpdateTiles()
-    {
-       
-    }
 
-    private void GenerateInitialTiles()
+    private void GenerateStartingPlatform()
     {
-        GenerateBackground(0, 20, _lowestYGenerated, _highestYGenerated);
-        GenerateLeftWall(_lowestYGenerated, _highestYGenerated);
-        GenerateRightWall(_lowestYGenerated, _highestYGenerated);
-    }
+        var playerPosition = _player.GlobalPosition;
 
-    private void GenerateBackground(int startX, int endX, int startY, int endY)
-    {
-        for (var x = startX; x < endX; x++)
+        var startX = (int)playerPosition.X / CellSize + _leftBoundary;
+        var startY = (int)playerPosition.Y / CellSize + 1;
+
+        for (var x = startX; x < startX + (_rightBoundary - _leftBoundary); x++)
         {
-            for (var y = startY; y < endY; y++)
+            for (var y = 0; y < StartingPlatformHeight; y++)
             {
-                var randomAtlasCoords = GetRandomAtlasCoords();
-                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), 0, randomAtlasCoords, 0);
+                var tileCoord = (y == 0) ? _groundTileAtlasCoord : _groundTileAtlasCoord3;
+                _wallTileMap.SetCell(WallLayer, new Vector2I(x, startY + y), 0, tileCoord, 0);
             }
         }
-    }
-
-    private void GenerateLeftWall(int startY, int endY)
+    }    private Vector2I GetRandomAtlasCoords()
     {
-        for (var y = startY; y < endY; y++)
-        {
-            _wallTileMap.SetCell(WallLayer, new Vector2I(0, y), 0, _leftWallAtlasCoords);
-        }
-    }
-
-    private void GenerateRightWall(int startY, int endY)
-    {
-        for (var y = startY; y < endY; y++)
-        {
-            _wallTileMap.SetCell(WallLayer, new Vector2I(19, y), 0, _rightWallAtlasCoords);
-        }
-    }
-
-    private Vector2I GetRandomAtlasCoords()
-    {
-        var randomIndex = _rng.RandiRange(0, _tileCoords.Count - 1);
-        return _tileCoords[randomIndex];
-    }
-
-    private void RemoveTilesAbove(int aboveY)
-    {
-
-        
-      
-    }
-
-    private void RemoveTilesBelow(int belowY)
-    {
-
-        
+        var randomIndex = _rng.RandiRange(0, _backgroundTileCoords.Count - 1);
+        return _backgroundTileCoords[randomIndex];
     }
 }

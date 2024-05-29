@@ -2,13 +2,16 @@ using Godot;
 
 public partial class CameraController : Camera2D
 {
+    private const int CellSize = 16;
+
     private CharacterBody2D _player;
     private Vector2 _viewportRect;
-
-
+    
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        
+        
         _player = GetParent<CharacterBody2D>();
         _viewportRect = GetViewportRect().Size;
 
@@ -16,6 +19,14 @@ public partial class CameraController : Camera2D
         PositionSmoothingSpeed = 10;
         
         LimitBottom = (int)_viewportRect.Y;
+        LimitLeft = - (CellSize * 13);
+        LimitRight = (int)(CellSize * 13 + _viewportRect.X);
+        
+        GD.Print(_viewportRect.X);
+        GD.Print(_viewportRect.Y);
+
+
+
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
