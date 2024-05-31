@@ -19,8 +19,8 @@ public partial class CameraController : Camera2D
         PositionSmoothingSpeed = 10;
         
         LimitBottom = (int)_viewportRect.Y;
-        LimitLeft = - (CellSize * 13);
-        LimitRight = (int)(CellSize * 13 + _viewportRect.X);
+        LimitLeft = - (CellSize * 11);
+        LimitRight = (int)(CellSize * 11 + _viewportRect.X);
         
         GD.Print(_viewportRect.X);
         GD.Print(_viewportRect.Y);

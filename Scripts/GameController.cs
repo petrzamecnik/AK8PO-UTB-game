@@ -2,11 +2,16 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+
 public partial class GameController : Node
 {
     private const int BackgroundLayer = -1;
     private const int WallLayer = 0;
-    private const int CellSize = 16;
+    private const int TileSize = 16;
+    private const int WallHeightInPixels = 960;
+    private const int StartingPlatformWidthInPixels = 640;
+    private const int StartingPlatformWidthInTiles = 40;
+    
 
     private readonly List<Vector2I> _backgroundTileCoords = new List<Vector2I>
     {
@@ -40,20 +45,42 @@ public partial class GameController : Node
 
     private RandomNumberGenerator _rng = new RandomNumberGenerator();
     private CharacterBody2D _player;
-    private StaticBody2D _leftWall;
-    private StaticBody2D _rightWall;
+    
+    private Viewport _viewport;
+    
+    // scenes
+    private PackedScene _leftWallScene;
+    private PackedScene _rightWallScene;
 
+    // instances
+    private Node2D _leftWallInstance0;
+    private Node2D _leftWallInstance1;
+    private Node2D _leftWallInstance2;
+    private Node2D _rightWallInstance0;
+    private Node2D _rightWallInstance1;
+    private Node2D _rightWallInstance2;
+
+    
+    
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        _player = GetNode<CharacterBody2D>("Player");
+        _viewport = GetViewport();
         _backgroundTileMap = GetNode<TileMap>("BackgroundTileMap");
         _wallTileMap = GetNode<TileMap>("WallTileMap");
-        _player = GetNode<CharacterBody2D>("Player");
-        _leftWall = GetNode<StaticBody2D>("LeftWall");
-        _rightWall = GetNode<StaticBody2D>("RightWall");
+        
+        _leftWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/left_wall.tscn");
+        _rightWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/right_wall.tscn");
         
         _backgroundTileMap.ZIndex = BackgroundLayer;
         _wallTileMap.ZIndex = WallLayer;
+        
+        
+        
+        
+        
+        InitializeWalls();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -68,14 +95,42 @@ public partial class GameController : Node
             GD.Print("Player Y position tiles:", CalculateTilesFromPixels((int)playerGlobalPosition.Y));
         }
         
-        UpdateWallPosition(playerGlobalPosition);
+        
+    }
+    
+    private void InitializeWalls()
+    {
+        _leftWallInstance0 = _leftWallScene.Instantiate() as Node2D;
+        _leftWallInstance1 = _leftWallScene.Instantiate() as Node2D;
+        _leftWallInstance2 = _leftWallScene.Instantiate() as Node2D;
+        _rightWallInstance0 = _rightWallScene.Instantiate() as Node2D;
+        _rightWallInstance1 = _rightWallScene.Instantiate() as Node2D;
+        _rightWallInstance2 = _rightWallScene.Instantiate() as Node2D;
+        
+        _leftWallInstance0!.GlobalPosition = new Vector2I(-8, 0);
+        _leftWallInstance1!.GlobalPosition = new Vector2I(-8, 0 - WallHeightInPixels);
+        _leftWallInstance2!.GlobalPosition = new Vector2I(-8, 0 - WallHeightInPixels * 2);
+        _rightWallInstance0!.GlobalPosition = new Vector2I(31 * TileSize, 0);
+        _rightWallInstance1!.GlobalPosition = new Vector2I(31 * TileSize, 0 - WallHeightInPixels);
+        _rightWallInstance2!.GlobalPosition = new Vector2I(31 * TileSize, 0 - WallHeightInPixels * 2);
+        
+        AddChild(_leftWallInstance0);
+        AddChild(_leftWallInstance1);
+        AddChild(_leftWallInstance2);
+        AddChild(_rightWallInstance0);
+        AddChild(_rightWallInstance1);
+        AddChild(_rightWallInstance2);
     }
 
-    private void UpdateWallPosition(Vector2 playerGlobalPosition)
+    private void UpdateWalls()
     {
-        _leftWall.GlobalPosition = _leftWall.GlobalPosition with { Y = playerGlobalPosition.Y };
-        _rightWall.GlobalPosition = _rightWall.GlobalPosition with { Y = playerGlobalPosition.Y };
+        GD.Print("LeftWall0 Y Position: ", _leftWallInstance0.GlobalPosition.Y);
+        GD.Print("LeftWall1 Y Position: ", _leftWallInstance1.GlobalPosition.Y);
+        GD.Print("LeftWall2 Y Position: ", _leftWallInstance1.GlobalPosition.Y);
     }
+    
+    
+    
 
 
     private Vector2I GetRandomAtlasCoords()
@@ -87,6 +142,11 @@ public partial class GameController : Node
 
     private int CalculateTilesFromPixels(int pixels)
     {
-        return pixels / CellSize;
+        return pixels / TileSize;
+    }
+
+    private int CalculatePixelsFromTiles(int tiles)
+    {
+        return tiles * TileSize;
     }
 }

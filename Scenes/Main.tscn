@@ -1,9 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bxrkx0eawosbw"]
+[gd_scene load_steps=7 format=3 uid="uid://bxrkx0eawosbw"]
 
 [ext_resource type="PackedScene" uid="uid://b2mqqhud0onav" path="res://Scenes/Player.tscn" id="1_dxgug"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_nph22"]
-[ext_resource type="PackedScene" uid="uid://cucllqncq816c" path="res://Prefabs/left_wall.tscn" id="4_5ud5o"]
-[ext_resource type="PackedScene" uid="uid://btejxfhn04apq" path="res://Prefabs/right_wall.tscn" id="5_m7fn3"]
 [ext_resource type="PackedScene" uid="uid://1mwf06g1qiuc" path="res://Prefabs/starting_platform.tscn" id="6_cirsw"]
 [ext_resource type="Texture2D" uid="uid://dhw23heptlji" path="res://Sprites/Dungeon Tile Set.png" id="6_x56ig"]
 
@@ -444,9 +442,5 @@ format = 2
 
 [node name="Player" parent="." instance=ExtResource("1_dxgug")]
 position = Vector2(160, 568)
-
-[node name="LeftWall" parent="." instance=ExtResource("4_5ud5o")]
-
-[node name="RightWall" parent="." instance=ExtResource("5_m7fn3")]
 
 [node name="StartingPlatform" parent="." instance=ExtResource("6_cirsw")]
