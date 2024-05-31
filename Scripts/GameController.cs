@@ -5,49 +5,16 @@ using System.Collections.Generic;
 
 public partial class GameController : Node
 {
-    private const int BackgroundLayer = -1;
-    private const int WallLayer = 0;
     private const int TileSize = 16;
     private const int WallHeightInPixels = 960;
+    private const int BackgroundHeightInPixels = 1600;
 
-    private readonly List<Vector2I> _backgroundTileCoords = new List<Vector2I>
-    {
-        new Vector2I(6, 6),
-        new Vector2I(6, 7),
-        new Vector2I(7, 6),
-        new Vector2I(7, 7),
-        new Vector2I(8, 6),
-        new Vector2I(8, 7),
-        new Vector2I(9, 7),
-        new Vector2I(9, 6),
-        new Vector2I(10, 6),
-        new Vector2I(10, 7),
-        new Vector2I(11, 6),
-        new Vector2I(11, 7),
-        new Vector2I(12, 1),
-        new Vector2I(12, 2),
-        new Vector2I(12, 3),
-        new Vector2I(12, 4),
-        new Vector2I(12, 5),
-        new Vector2I(12, 6),
-        new Vector2I(12, 7),
-        new Vector2I(13, 1),
-        new Vector2I(13, 2),
-        new Vector2I(13, 3)
-    };
-
-
-    private TileMap _backgroundTileMap;
-    private TileMap _wallTileMap;
-
-    private RandomNumberGenerator _rng = new RandomNumberGenerator();
     private CharacterBody2D _player;
-
-    private Viewport _viewport;
 
     // scenes
     private PackedScene _leftWallScene;
     private PackedScene _rightWallScene;
+    private PackedScene _backGroundScene;
 
     // instances
     private Node2D _leftWallInstance0;
@@ -56,25 +23,21 @@ public partial class GameController : Node
     private Node2D _rightWallInstance0;
     private Node2D _rightWallInstance1;
     private Node2D _rightWallInstance2;
+    private Node2D _backgroundInstance0;
+    private Node2D _backgroundInstance1;
 
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         _player = GetNode<CharacterBody2D>("Player");
-        _viewport = GetViewport();
-        _backgroundTileMap = GetNode<TileMap>("BackgroundTileMap");
-        _wallTileMap = GetNode<TileMap>("WallTileMap");
 
         _leftWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/left_wall.tscn");
         _rightWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/right_wall.tscn");
-
-        _backgroundTileMap.ZIndex = BackgroundLayer;
-        _wallTileMap.ZIndex = WallLayer;
-
+        _backGroundScene = (PackedScene)ResourceLoader.Load("res://prefabs/background_tile_map.tscn");
 
         InitializeWalls();
-        GenerateBackground(-8, 28, -40, 40);
+        InitializeBackground();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -85,53 +48,49 @@ public partial class GameController : Node
         if (Input.IsActionJustPressed("debug_key"))
         {
             GD.Print("Player Global Position:", playerGlobalPosition);
-            GD.Print("**************************************************");
-            GD.Print("LeftWall0 Y Position: ", _leftWallInstance0.GlobalPosition.Y);
-            GD.Print("LeftWall1 Y Position: ", _leftWallInstance1.GlobalPosition.Y);
-            GD.Print("LeftWall2 Y Position: ", _leftWallInstance2.GlobalPosition.Y);
-            GD.Print("**************************************************");
-            GD.Print("RightWall0 Y Position: ", _rightWallInstance0.GlobalPosition.Y);
-            GD.Print("RightWall1 Y Position: ", _rightWallInstance1.GlobalPosition.Y);
-            GD.Print("RightWall2 Y Position: ", _rightWallInstance2.GlobalPosition.Y);
         }
 
         UpdateWalls();
         UpdateBackground();
+    }
 
-        if (Input.IsActionJustPressed("debug_key"))
-        {
-            RemoveBackground(-8, 28, -40, 40);
-        }
-        
+    private void InitializeBackground()
+    {
+        _backgroundInstance0 = _backGroundScene.Instantiate() as Node2D;
+        _backgroundInstance1 = _backGroundScene.Instantiate() as Node2D;
+
+        _backgroundInstance0!.GlobalPosition = new Vector2I(0, 0);
+        _backgroundInstance1!.GlobalPosition = new Vector2I(0, 0 - BackgroundHeightInPixels);
+
+        AddChild(_backgroundInstance0);
+        AddChild(_backgroundInstance1);
     }
 
     private void UpdateBackground()
     {
-        
+        GD.Print(_backgroundInstance0.GlobalPosition.Y);
+        GD.Print(_backgroundInstance1.GlobalPosition.Y);
+
+        UpdateBackgroundPosition(_backgroundInstance0, _backgroundInstance1);
+        UpdateBackgroundPosition(_backgroundInstance1, _backgroundInstance0);
     }
 
-    private void GenerateBackground(int startX, int endX, int startY, int endY)
+    private void UpdateBackgroundPosition(Node2D background1, Node2D background2)
     {
-        for (var x = startX; x < endX; x++)
+        const int offset = 200;
+
+        if (_player.GlobalPosition.Y < background2.GlobalPosition.Y - offset)
         {
-            for (var y = startY; y < endY; y++)
-            {
-                var randomAtlasCoords = GetRandomAtlasCoords();
-                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), 0, randomAtlasCoords, 0);
-            }
+            background1.GlobalPosition = new Vector2(background1.GlobalPosition.X,
+                background2.GlobalPosition.Y - BackgroundHeightInPixels);
+        }
+        else if (_player.GlobalPosition.Y > background2.GlobalPosition.Y + offset)
+        {
+            background1.GlobalPosition = new Vector2(background1.GlobalPosition.X,
+                background2.GlobalPosition.Y + BackgroundHeightInPixels);
         }
     }
-    
-    private void RemoveBackground(int startX, int endX, int startY, int endY)
-    {
-        for (var x = startX; x < endX; x++)
-        {
-            for (var y = startY; y < endY; y++)
-            {
-                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), 0, new Vector2I(-1, -1), 0);
-            }
-        }
-    }    
+
     private void InitializeWalls()
     {
         _leftWallInstance0 = _leftWallScene.Instantiate() as Node2D;
@@ -218,13 +177,6 @@ public partial class GameController : Node
             wall2.GlobalPosition = new Vector2(wall2.GlobalPosition.X, newYPosition);
     }
 
-    private Vector2I GetRandomAtlasCoords()
-    {
-        var randomIndex = _rng.RandiRange(0, _backgroundTileCoords.Count - 1);
-        return _backgroundTileCoords[randomIndex];
-    }
-
-
     private int CalculateTilesFromPixels(int pixels)
     {
         return pixels / TileSize;
@@ -233,5 +185,10 @@ public partial class GameController : Node
     private int CalculatePixelsFromTiles(int tiles)
     {
         return tiles * TileSize;
+    }
+
+    private (double, double) GetPlayerPositionInTiles()
+    {
+        return (Math.Ceiling(_player.GlobalPosition.X / TileSize), Math.Ceiling(_player.GlobalPosition.Y / TileSize));
     }
 }
