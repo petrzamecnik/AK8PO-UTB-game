@@ -9,9 +9,6 @@ public partial class GameController : Node
     private const int WallLayer = 0;
     private const int TileSize = 16;
     private const int WallHeightInPixels = 960;
-    private const int StartingPlatformWidthInPixels = 640;
-    private const int StartingPlatformWidthInTiles = 40;
-
 
     private readonly List<Vector2I> _backgroundTileCoords = new List<Vector2I>
     {
@@ -77,6 +74,7 @@ public partial class GameController : Node
 
 
         InitializeWalls();
+        GenerateBackground(-8, 28, -40, 40);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -98,8 +96,42 @@ public partial class GameController : Node
         }
 
         UpdateWalls();
+        UpdateBackground();
+
+        if (Input.IsActionJustPressed("debug_key"))
+        {
+            RemoveBackground(-8, 28, -40, 40);
+        }
+        
     }
 
+    private void UpdateBackground()
+    {
+        
+    }
+
+    private void GenerateBackground(int startX, int endX, int startY, int endY)
+    {
+        for (var x = startX; x < endX; x++)
+        {
+            for (var y = startY; y < endY; y++)
+            {
+                var randomAtlasCoords = GetRandomAtlasCoords();
+                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), 0, randomAtlasCoords, 0);
+            }
+        }
+    }
+    
+    private void RemoveBackground(int startX, int endX, int startY, int endY)
+    {
+        for (var x = startX; x < endX; x++)
+        {
+            for (var y = startY; y < endY; y++)
+            {
+                _backgroundTileMap.SetCell(BackgroundLayer, new Vector2I(x, y), 0, new Vector2I(-1, -1), 0);
+            }
+        }
+    }    
     private void InitializeWalls()
     {
         _leftWallInstance0 = _leftWallScene.Instantiate() as Node2D;
