@@ -143,50 +143,47 @@ public partial class GameController : Node
         leftWallPositions.Sort();
         rightWallPositions.Sort();
 
-        float highestLeftWallY = leftWallPositions[0];
-        float lowestLeftWallY = leftWallPositions[2];
-        float highestRightWallY = rightWallPositions[0];
-        float lowestRightWallY = rightWallPositions[2];
+        var highestLeftWallY = leftWallPositions[0];
+        var lowestLeftWallY = leftWallPositions[2];
+        var highestRightWallY = rightWallPositions[0];
+        var lowestRightWallY = rightWallPositions[2];
 
         // Handle left walls
         if (_player.GlobalPosition.Y < highestLeftWallY + WallHeightInPixels / 2)
         {
-            MoveWallAbove(ref _leftWallInstance0, ref _leftWallInstance1, ref _leftWallInstance2, lowestLeftWallY, highestLeftWallY);
+            MoveWall(_leftWallInstance0, _leftWallInstance1, _leftWallInstance2, lowestRightWallY, highestRightWallY,
+                true);
         }
         else if (_player.GlobalPosition.Y > lowestLeftWallY - WallHeightInPixels / 2)
         {
-            MoveWallBelow(ref _leftWallInstance0, ref _leftWallInstance1, ref _leftWallInstance2, lowestLeftWallY, highestLeftWallY);
+            MoveWall(_leftWallInstance0, _leftWallInstance1, _leftWallInstance2, lowestLeftWallY,
+                highestLeftWallY, false);
         }
 
         // Handle right walls
         if (_player.GlobalPosition.Y < highestRightWallY + WallHeightInPixels / 2)
         {
-            MoveWallAbove(ref _rightWallInstance0, ref _rightWallInstance1, ref _rightWallInstance2, lowestRightWallY, highestRightWallY);
+            MoveWall(_rightWallInstance0, _rightWallInstance1, _rightWallInstance2, lowestRightWallY,
+                highestRightWallY, true);
         }
         else if (_player.GlobalPosition.Y > lowestRightWallY - WallHeightInPixels / 2)
         {
-            MoveWallBelow(ref _rightWallInstance0, ref _rightWallInstance1, ref _rightWallInstance2, lowestRightWallY, highestRightWallY);
+            MoveWall(_rightWallInstance0, _rightWallInstance1, _rightWallInstance2, lowestRightWallY,
+                highestRightWallY, false);
         }
     }
-    
-    private void MoveWallAbove(ref Node2D wall0, ref Node2D wall1, ref Node2D wall2, float lowestWallY, float highestWallY)
-    {
-        if (wall0.GlobalPosition.Y == lowestWallY)
-            wall0.GlobalPosition = new Vector2(wall0.GlobalPosition.X, highestWallY - WallHeightInPixels);
-        else if (wall1.GlobalPosition.Y == lowestWallY)
-            wall1.GlobalPosition = new Vector2(wall1.GlobalPosition.X, highestWallY - WallHeightInPixels);
-        else if (wall2.GlobalPosition.Y == lowestWallY)
-            wall2.GlobalPosition = new Vector2(wall2.GlobalPosition.X, highestWallY - WallHeightInPixels);
-    }
 
-    private void MoveWallBelow(ref Node2D wall0, ref Node2D wall1, ref Node2D wall2, float lowestWallY, float highestWallY)
+    private void MoveWall(Node2D wall0, Node2D wall1, Node2D wall2, float lowestWallY, float highestWallY,
+        bool moveAbove)
     {
-        if (wall0.GlobalPosition.Y == highestWallY)
-            wall0.GlobalPosition = new Vector2(wall0.GlobalPosition.X, lowestWallY + WallHeightInPixels);
-        else if (wall1.GlobalPosition.Y == highestWallY)
-            wall1.GlobalPosition = new Vector2(wall1.GlobalPosition.X, lowestWallY + WallHeightInPixels);
-        else if (wall2.GlobalPosition.Y == highestWallY)
-            wall2.GlobalPosition = new Vector2(wall2.GlobalPosition.X, lowestWallY + WallHeightInPixels);
+        var newYPosition = moveAbove ? highestWallY - WallHeightInPixels : lowestWallY + WallHeightInPixels;
+
+        if (Math.Abs(wall0.GlobalPosition.Y - (moveAbove ? lowestWallY : highestWallY)) < 10)
+            wall0.GlobalPosition = new Vector2(wall0.GlobalPosition.X, newYPosition);
+        else if (Math.Abs(wall1.GlobalPosition.Y - (moveAbove ? lowestWallY : highestWallY)) < 10)
+            wall1.GlobalPosition = new Vector2(wall1.GlobalPosition.X, newYPosition);
+        else if (Math.Abs(wall2.GlobalPosition.Y - (moveAbove ? lowestWallY : highestWallY)) < 10)
+            wall2.GlobalPosition = new Vector2(wall2.GlobalPosition.X, newYPosition);
     }
 
     private Vector2I GetRandomAtlasCoords()
