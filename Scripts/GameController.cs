@@ -68,9 +68,6 @@ public partial class GameController : Node
 
     private void UpdateBackground()
     {
-        GD.Print(_backgroundInstance0.GlobalPosition.Y);
-        GD.Print(_backgroundInstance1.GlobalPosition.Y);
-
         UpdateBackgroundPosition(_backgroundInstance0, _backgroundInstance1);
         UpdateBackgroundPosition(_backgroundInstance1, _backgroundInstance0);
     }

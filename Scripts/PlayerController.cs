@@ -89,15 +89,15 @@ public partial class PlayerController : CharacterBody2D
 
     private void HandleJump(ref Vector2 velocity)
     {
-        // if (IsOnFloor() && Input.IsActionJustPressed("move_jump"))
-        // {
-        //     velocity.Y = _jumpSpeed;
-        // }
-        
-        // TODO: for debugging purposses
-        if (Input.IsActionJustPressed("move_jump"))
+        if (IsOnFloor() && Input.IsActionJustPressed("move_jump"))
         {
             velocity.Y = _jumpSpeed;
         }
+        
+        // TODO: for debugging purposses
+        // if (Input.IsActionJustPressed("move_jump"))
+        // {
+        //     velocity.Y = _jumpSpeed;
+        // }
     }
 }
