@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using static System.Security.Cryptography.RandomNumberGenerator;
 
 
 public partial class GameController : Node
@@ -8,13 +9,23 @@ public partial class GameController : Node
     private const int TileSize = 16;
     private const int WallHeightInPixels = 960;
     private const int BackgroundHeightInPixels = 1600;
+    private const int PlatformLeftBoundary = -100;
+    private const int PlatformRightBoundary = 400;
+    private const int MinPlatformDistance = 30;
+    private const int MaxPlatformDistance = 100;
 
     private CharacterBody2D _player;
+    private Random _rnd = new Random();
+    private float _highestPlayerPosition;
+    private Node2D _lastPlatform;
+    private List<Node2D> _platforms = new List<Node2D>();
 
     // scenes
     private PackedScene _leftWallScene;
     private PackedScene _rightWallScene;
     private PackedScene _backGroundScene;
+    private PackedScene _platform1Scene;
+    private PackedScene _platform2Scene;
 
     // instances
     private Node2D _leftWallInstance0;
@@ -36,6 +47,15 @@ public partial class GameController : Node
         _rightWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/right_wall.tscn");
         _backGroundScene = (PackedScene)ResourceLoader.Load("res://prefabs/background_tile_map.tscn");
 
+        _platform1Scene = (PackedScene)ResourceLoader.Load("res://Prefabs/platform_1.tscn");
+        _platform2Scene = (PackedScene)ResourceLoader.Load("res://Prefabs/platform_2.tscn");
+
+        _highestPlayerPosition = _player.GlobalPosition.Y;
+
+        
+        _lastPlatform = SpawnPlatform(150, 500);
+        
+        
         InitializeWalls();
         InitializeBackground();
     }
@@ -48,10 +68,42 @@ public partial class GameController : Node
         if (Input.IsActionJustPressed("debug_key"))
         {
             GD.Print("Player Global Position:", playerGlobalPosition);
+            GD.Print("Highest player pos: ", _highestPlayerPosition);
         }
 
         UpdateWalls();
         UpdateBackground();
+        GeneratePlatforms();
+    }
+
+    private void GeneratePlatforms()
+    {
+        
+        // Check if the player crossed the highest platform's Y
+        if (_player.GlobalPosition.Y < _highestPlayerPosition - 100)
+        {
+            _highestPlayerPosition = _player.GlobalPosition.Y;
+
+            // Calculate new platform Y
+            float newPlatformY = _highestPlayerPosition - _rnd.Next(MinPlatformDistance, MaxPlatformDistance + 1);
+
+            // Calculate random X based on last platform's position
+            int minX = Mathf.Max((int)_lastPlatform.GlobalPosition.X - 100, PlatformLeftBoundary);
+            int maxX = Mathf.Min((int)_lastPlatform.GlobalPosition.X + 100, PlatformRightBoundary);
+            float newPlatformX = _rnd.Next(minX, maxX + 1);
+
+            _lastPlatform = SpawnPlatform(newPlatformX, newPlatformY);
+        }
+    }
+
+    private Node2D SpawnPlatform(float x, float y)
+    {
+        var chosenPlatform = _rnd.Next() % 2 == 0 ? _platform1Scene : _platform2Scene;
+        var platformToSpawn = chosenPlatform.Instantiate() as Node2D;
+        platformToSpawn!.GlobalPosition = new Vector2(x, y);
+        AddChild(platformToSpawn);
+        _platforms.Add(platformToSpawn);
+        return platformToSpawn; // Return the created platform node
     }
 
     private void InitializeBackground()

@@ -7,6 +7,7 @@ size = Vector2(48, 4.5)
 
 [node name="Platform2" type="RigidBody2D"]
 gravity_scale = 0.0
+lock_rotation = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_ea8fp")
@@ -16,3 +17,4 @@ region_rect = Rect2(16, 160, 48, 8)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -1.25)
 shape = SubResource("RectangleShape2D_tp4mh")
+one_way_collision = true
