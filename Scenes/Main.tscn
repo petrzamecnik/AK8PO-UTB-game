@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bxrkx0eawosbw"]
+[gd_scene load_steps=9 format=3 uid="uid://bxrkx0eawosbw"]
 
 [ext_resource type="PackedScene" uid="uid://b2mqqhud0onav" path="res://Scenes/Player.tscn" id="1_dxgug"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_nph22"]
+[ext_resource type="PackedScene" uid="uid://b831bxbtk111" path="res://Prefabs/platform_1.tscn" id="5_b4xde"]
 [ext_resource type="PackedScene" uid="uid://1mwf06g1qiuc" path="res://Prefabs/starting_platform.tscn" id="6_cirsw"]
+[ext_resource type="PackedScene" uid="uid://dhx5pt2xsuko3" path="res://Prefabs/platform_2.tscn" id="6_wehw6"]
 [ext_resource type="Texture2D" uid="uid://dhw23heptlji" path="res://Sprites/Dungeon Tile Set.png" id="6_x56ig"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_48288"]
@@ -440,3 +442,8 @@ format = 2
 position = Vector2(160, 568)
 
 [node name="StartingPlatform" parent="." instance=ExtResource("6_cirsw")]
+
+[node name="Platform1" parent="." instance=ExtResource("5_b4xde")]
+position = Vector2(208, 536)
+
+[node name="Platform2" parent="." instance=ExtResource("6_wehw6")]
