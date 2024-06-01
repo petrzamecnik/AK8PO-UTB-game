@@ -8,10 +8,10 @@ public partial class PlayerController : CharacterBody2D
     private float _jumpSpeed = -400.0f;
     private float _gravity;
     private bool _facingRight = true;
+    private bool _canDoubleJump = true;
 
     private AnimatedSprite2D _animatedSprite;
     private CollisionShape2D _collisionShape;
-
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -38,6 +38,12 @@ public partial class PlayerController : CharacterBody2D
 
         Velocity = velocity; // applies updated velocity to the character
         MoveAndSlide();
+
+        // Reset double jump if on the floor
+        if (IsOnFloor())
+        {
+            _canDoubleJump = true;
+        }
     }
 
     private void HandleAnimation(Vector2 velocity)
@@ -89,15 +95,17 @@ public partial class PlayerController : CharacterBody2D
 
     private void HandleJump(ref Vector2 velocity)
     {
-        if (IsOnFloor() && Input.IsActionJustPressed("move_jump"))
+        if (IsOnFloor())
+        {
+            if (Input.IsActionJustPressed("move_jump"))
+            {
+                velocity.Y = _jumpSpeed;
+            }
+        }
+        else if (_canDoubleJump && Input.IsActionJustPressed("move_jump"))
         {
             velocity.Y = _jumpSpeed;
+            _canDoubleJump = false;
         }
-        
-        // TODO: for debugging purposses
-        // if (Input.IsActionJustPressed("move_jump"))
-        // {
-        //     velocity.Y = _jumpSpeed;
-        // }
     }
 }
