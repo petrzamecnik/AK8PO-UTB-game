@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://cykt8ggm6fupb"]
+
+[ext_resource type="Script" path="res://Scripts/ScoreController.cs" id="1_viabw"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_viabw")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="ScoreLabel" type="Label" parent="PanelContainer/GridContainer"]
+layout_mode = 2
+text = "Score: "
