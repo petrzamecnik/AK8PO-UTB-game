@@ -13,6 +13,9 @@ public partial class GameController : Node
     private const int PlatformRightBoundary = 400;
     private const int MinPlatformDistance = 30;
     private const int MaxPlatformDistance = 100;
+    
+    private const int LookAheadDistance = 1000;
+    private const int PlatformBuffer = 3;   
 
     private CharacterBody2D _player;
     private Random _rnd = new Random();
@@ -78,24 +81,26 @@ public partial class GameController : Node
 
     private void GeneratePlatforms()
     {
-        
-        // Check if the player crossed the highest platform's Y
-        if (_player.GlobalPosition.Y < _highestPlayerPosition - 100)
+        float spawnTriggerY = _player.GlobalPosition.Y - LookAheadDistance;
+
+        while (_lastPlatform.GlobalPosition.Y > spawnTriggerY || _platforms.Count < PlatformBuffer)
         {
-            _highestPlayerPosition = _player.GlobalPosition.Y;
+            float newPlatformY = _lastPlatform.GlobalPosition.Y - 
+                                 _rnd.Next(MinPlatformDistance, MaxPlatformDistance + 1);
 
-            // Calculate new platform Y
-            float newPlatformY = _highestPlayerPosition - _rnd.Next(MinPlatformDistance, MaxPlatformDistance + 1);
-
-            // Calculate random X based on last platform's position
             int minX = Mathf.Max((int)_lastPlatform.GlobalPosition.X - 100, PlatformLeftBoundary);
             int maxX = Mathf.Min((int)_lastPlatform.GlobalPosition.X + 100, PlatformRightBoundary);
             float newPlatformX = _rnd.Next(minX, maxX + 1);
 
             _lastPlatform = SpawnPlatform(newPlatformX, newPlatformY);
         }
-    }
 
+        while (_platforms.Count > 0 && _platforms[0].GlobalPosition.Y > _player.GlobalPosition.Y + 500) // 500 is an example distance
+        {
+            _platforms[0].QueueFree();
+            _platforms.RemoveAt(0);
+        }
+    }
     private Node2D SpawnPlatform(float x, float y)
     {
         var chosenPlatform = _rnd.Next() % 2 == 0 ? _platform1Scene : _platform2Scene;
