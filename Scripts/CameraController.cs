@@ -20,7 +20,7 @@ public partial class CameraController : Camera2D
         
         LimitBottom = (int)_viewportRect.Y;
         LimitLeft = - (CellSize * 11);
-        LimitRight = (int)(CellSize * 11 + _viewportRect.X);
+        LimitRight = (int)(CellSize * -9 + _viewportRect.X);
         
         GD.Print(_viewportRect.X);
         GD.Print(_viewportRect.Y);
