@@ -1,3 +1,29 @@
-[gd_scene format=3 uid="uid://hefa35xqjcbw"]
+[gd_scene load_steps=2 format=3 uid="uid://hefa35xqjcbw"]
+
+[ext_resource type="Script" path="res://Scripts/GameOverController.cs" id="1_ykf8v"]
 
 [node name="GameOver" type="Node"]
+script = ExtResource("1_ykf8v")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="RestartButton" type="Button" parent="PanelContainer/GridContainer"]
+layout_mode = 2
+text = "Restart Game"
+
+[node name="ExitButton" type="Button" parent="PanelContainer/GridContainer"]
+layout_mode = 2
+text = "Exit Game"
+
+[connection signal="pressed" from="PanelContainer/GridContainer/RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="PanelContainer/GridContainer/ExitButton" to="." method="_on_exit_button_pressed"]

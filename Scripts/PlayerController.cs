@@ -16,10 +16,14 @@ public partial class PlayerController : CharacterBody2D
     private AnimatedSprite2D _animatedSprite;
     private CollisionShape2D _collisionShape;
     private GameController _gameController;
+    private PackedScene _gameOverScene;
+
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        _gameOverScene = (PackedScene)ResourceLoader.Load("res://Scenes/GameOver.tscn");
+        
         _gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
         _animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         _collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
@@ -44,7 +48,11 @@ public partial class PlayerController : CharacterBody2D
     
     private void OnDieAnimationFinished()
     {
-        GetTree().ChangeSceneToFile("res://Scenes/GameOver.tscn");
+        var gameOverSceneInstance = _gameOverScene.Instantiate();
+        
+        GetTree().Root.AddChild(gameOverSceneInstance);
+        GetTree().CurrentScene.QueueFree();
+        GetTree().CurrentScene = gameOverSceneInstance;
     }
 
     public override void _PhysicsProcess(double delta)
