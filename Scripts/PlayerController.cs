@@ -4,14 +4,18 @@ using System;
 // ReSharper disable once CheckNamespace
 public partial class PlayerController : CharacterBody2D
 {
+    
     private float _speed = 100.0f;
     private float _jumpSpeed = -400.0f;
     private float _gravity;
     private bool _facingRight = true;
     private bool _canDoubleJump = true;
+    private bool _isDead;
+
 
     private AnimatedSprite2D _animatedSprite;
     private CollisionShape2D _collisionShape;
+    private GameController _gameController;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -19,11 +23,28 @@ public partial class PlayerController : CharacterBody2D
         _gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
         _animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         _collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
+        
+        _gameController = GetParent<GameController>();
+        _gameController.Connect(nameof(GameController.KillPlayerEventHandler), new Callable(this, nameof(OnKillPlayer)));
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+    }
+    
+    private void OnKillPlayer()
+    {
+        if (_isDead) return;
+        _isDead = true;
+
+        _animatedSprite.Play("Die");
+        GetTree().CreateTimer(0.7f).Connect("timeout", new Callable(this, nameof(OnDieAnimationFinished)));
+    }
+    
+    private void OnDieAnimationFinished()
+    {
+        GetTree().ChangeSceneToFile("res://Scenes/GameOver.tscn");
     }
 
     public override void _PhysicsProcess(double delta)
@@ -48,6 +69,11 @@ public partial class PlayerController : CharacterBody2D
 
     private void HandleAnimation(Vector2 velocity)
     {
+        if (_isDead)
+        {
+            return;
+        }
+
         if (!IsOnFloor())
         {
             _animatedSprite.Play("Jump");
@@ -69,6 +95,12 @@ public partial class PlayerController : CharacterBody2D
 
     private void HandleMovement(ref Vector2 velocity)
     {
+        if (_isDead)
+        {
+            velocity.X = 0;
+            return;
+        }
+
         bool wasFacingRight = _facingRight;
 
         if (Input.IsActionPressed("move_right"))
@@ -95,6 +127,11 @@ public partial class PlayerController : CharacterBody2D
 
     private void HandleJump(ref Vector2 velocity)
     {
+        if (_isDead)
+        {
+            return;
+        }
+
         if (IsOnFloor())
         {
             if (Input.IsActionJustPressed("move_jump"))
@@ -108,4 +145,5 @@ public partial class PlayerController : CharacterBody2D
             _canDoubleJump = false;
         }
     }
+
 }

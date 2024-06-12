@@ -6,6 +6,9 @@ using static System.Security.Cryptography.RandomNumberGenerator;
 
 public partial class GameController : Node
 {
+    [Signal]
+    public delegate void KillPlayerEventHandler();
+
     private const int TileSize = 16;
     private const int WallHeightInPixels = 960;
     private const int BackgroundHeightInPixels = 1600;
@@ -13,15 +16,17 @@ public partial class GameController : Node
     private const int PlatformRightBoundary = 400;
     private const int MinPlatformDistance = 30;
     private const int MaxPlatformDistance = 100;
-    
+
     private const int LookAheadDistance = 1000;
-    private const int PlatformBuffer = 3;   
+    private const int PlatformBuffer = 3;
 
     private CharacterBody2D _player;
     private Random _rnd = new Random();
     private float _highestPlayerPosition;
     private Node2D _lastPlatform;
     private List<Node2D> _platforms = new List<Node2D>();
+    private float _lowestPlatformY;
+    private bool _playerCanDie;
 
     // scenes
     private PackedScene _leftWallScene;
@@ -40,6 +45,11 @@ public partial class GameController : Node
     private Node2D _backgroundInstance0;
     private Node2D _backgroundInstance1;
 
+    public override void _EnterTree()
+    {
+        AddUserSignal(nameof(KillPlayerEventHandler));
+    }
+
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -55,10 +65,11 @@ public partial class GameController : Node
 
         _highestPlayerPosition = _player.GlobalPosition.Y;
 
-        
+
         _lastPlatform = SpawnPlatform(150, 500);
-        
-        
+        _lowestPlatformY = _lastPlatform.GlobalPosition.Y;
+
+
         InitializeWalls();
         InitializeBackground();
     }
@@ -77,6 +88,8 @@ public partial class GameController : Node
         UpdateWalls();
         UpdateBackground();
         GeneratePlatforms();
+        PlayerCanDieToggle();
+        KillPlayerIfTooLow();
     }
 
     private void GeneratePlatforms()
@@ -85,7 +98,7 @@ public partial class GameController : Node
 
         while (_lastPlatform.GlobalPosition.Y > spawnTriggerY || _platforms.Count < PlatformBuffer)
         {
-            float newPlatformY = _lastPlatform.GlobalPosition.Y - 
+            float newPlatformY = _lastPlatform.GlobalPosition.Y -
                                  _rnd.Next(MinPlatformDistance, MaxPlatformDistance + 1);
 
             int minX = Mathf.Max((int)_lastPlatform.GlobalPosition.X - 100, PlatformLeftBoundary);
@@ -95,12 +108,13 @@ public partial class GameController : Node
             _lastPlatform = SpawnPlatform(newPlatformX, newPlatformY);
         }
 
-        while (_platforms.Count > 0 && _platforms[0].GlobalPosition.Y > _player.GlobalPosition.Y + 500) // 500 is an example distance
+        while (_platforms.Count > 0 && _platforms[0].GlobalPosition.Y > _player.GlobalPosition.Y + 500)
         {
             _platforms[0].QueueFree();
             _platforms.RemoveAt(0);
         }
     }
+
     private Node2D SpawnPlatform(float x, float y)
     {
         var chosenPlatform = _rnd.Next() % 2 == 0 ? _platform1Scene : _platform2Scene;
@@ -108,7 +122,7 @@ public partial class GameController : Node
         platformToSpawn!.GlobalPosition = new Vector2(x, y);
         AddChild(platformToSpawn);
         _platforms.Add(platformToSpawn);
-        return platformToSpawn; // Return the created platform node
+        return platformToSpawn;
     }
 
     private void InitializeBackground()
@@ -244,5 +258,27 @@ public partial class GameController : Node
     private (double, double) GetPlayerPositionInTiles()
     {
         return (Math.Ceiling(_player.GlobalPosition.X / TileSize), Math.Ceiling(_player.GlobalPosition.Y / TileSize));
+    }
+
+    private bool IsPlayerGrounded()
+    {
+        return _player.IsOnFloor();
+    }
+
+    private void PlayerCanDieToggle()
+    {
+        if (_player.GlobalPosition.Y < 0)
+        {
+            _playerCanDie = true;
+        }
+    }
+
+    private void KillPlayerIfTooLow()
+    {
+        if (IsPlayerGrounded() && _player.GlobalPosition.Y > _lowestPlatformY && _playerCanDie)
+        {
+            // Emit signal that we can use to run function in PlayerController.cs (function is OnKillPlayer)
+            EmitSignal(nameof(KillPlayerEventHandler));
+        }
     }
 }
