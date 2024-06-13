@@ -13,13 +13,12 @@ pochopení a snadnou hratelnost, aby návštěvníci dne otevřených dveří mo
 
 - Hráč ovládá postavu, která skáče z platformy na platformu.
 - Cílem je dostat se co nejvýše.
-- Hráč sbírá mince pro získání bodů.
-- Hráč musí vyhýbat překážkám, které mohou způsobit smrt postavy.
+- Hráč získavá skóre tím, že skáče výš a výš
 - Platformy a překážky jsou procedurálně generované, což zajišťuje variabilitu každé hry.
 
 ## Ovládání
 
-- Šipky vlevo/vpravo pro pohyb
+- Šipky / WASD
 - Mezerník pro skok
 
 ## Technologie
