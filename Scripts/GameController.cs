@@ -1,8 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using static System.Security.Cryptography.RandomNumberGenerator;
-
+using System.Linq;
 
 public partial class GameController : Node
 {
@@ -16,7 +15,6 @@ public partial class GameController : Node
     private const int PlatformRightBoundary = 400;
     private const int MinPlatformDistance = 30;
     private const int MaxPlatformDistance = 100;
-
     private const int LookAheadDistance = 1000;
     private const int PlatformBuffer = 3;
 
@@ -28,86 +26,91 @@ public partial class GameController : Node
     private float _lowestPlatformY;
     private bool _playerCanDie;
 
-    // scenes
-    private PackedScene _leftWallScene;
-    private PackedScene _rightWallScene;
-    private PackedScene _backGroundScene;
-    private PackedScene _platform1Scene;
-    private PackedScene _platform2Scene;
+    private PackedScene _leftWallScene, _rightWallScene, _backGroundScene, _platform1Scene, _platform2Scene;
+    private Node2D[] _leftWallInstances = new Node2D[3];
+    private Node2D[] _rightWallInstances = new Node2D[3];
+    private Node2D[] _backgroundInstances = new Node2D[2];
 
-    // instances
-    private Node2D _leftWallInstance0;
-    private Node2D _leftWallInstance1;
-    private Node2D _leftWallInstance2;
-    private Node2D _rightWallInstance0;
-    private Node2D _rightWallInstance1;
-    private Node2D _rightWallInstance2;
-    private Node2D _backgroundInstance0;
-    private Node2D _backgroundInstance1;
+    public override void _EnterTree() => AddUserSignal(nameof(KillPlayerEventHandler));
 
-    public override void _EnterTree()
-    {
-        AddUserSignal(nameof(KillPlayerEventHandler));
-    }
-
-
-    // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        InitializePlayer();
+        LoadScenes();
+        InitializeGame();
+    }
+
+    public override void _Process(double delta)
+    {
+        DebugInfo();
+        UpdateGameElements();
+        CheckPlayerStatus();
+    }
+
+    private void InitializePlayer()
+    {
         _player = GetNode<CharacterBody2D>("Player");
-
-        _leftWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/left_wall.tscn");
-        _rightWallScene = (PackedScene)ResourceLoader.Load("res://prefabs/right_wall.tscn");
-        _backGroundScene = (PackedScene)ResourceLoader.Load("res://prefabs/background_tile_map.tscn");
-
-        _platform1Scene = (PackedScene)ResourceLoader.Load("res://Prefabs/platform_1.tscn");
-        _platform2Scene = (PackedScene)ResourceLoader.Load("res://Prefabs/platform_2.tscn");
-
         _highestPlayerPosition = _player.GlobalPosition.Y;
+    }
 
+    private void LoadScenes()
+    {
+        _leftWallScene = ResourceLoader.Load("res://prefabs/left_wall.tscn") as PackedScene;
+        _rightWallScene = ResourceLoader.Load("res://prefabs/right_wall.tscn") as PackedScene;
+        _backGroundScene = ResourceLoader.Load("res://prefabs/background_tile_map.tscn") as PackedScene;
+        _platform1Scene = ResourceLoader.Load("res://Prefabs/platform_1.tscn") as PackedScene;
+        _platform2Scene = ResourceLoader.Load("res://Prefabs/platform_2.tscn") as PackedScene;
+    }
 
+    private void InitializeGame()
+    {
         _lastPlatform = SpawnPlatform(150, 500);
         _lowestPlatformY = _lastPlatform.GlobalPosition.Y;
-
-
         InitializeWalls();
         InitializeBackground();
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
+    private void DebugInfo()
     {
-        var playerGlobalPosition = _player.GlobalPosition;
-
         if (Input.IsActionJustPressed("debug_key"))
         {
-            GD.Print("Player Global Position:", playerGlobalPosition);
+            GD.Print("Player Global Position:", _player.GlobalPosition);
             GD.Print("Highest player pos: ", _highestPlayerPosition);
         }
+    }
 
+    private void UpdateGameElements()
+    {
         UpdateWalls();
         UpdateBackground();
         GeneratePlatforms();
+    }
+
+    private void CheckPlayerStatus()
+    {
         PlayerCanDieToggle();
         KillPlayerIfTooLow();
     }
 
     private void GeneratePlatforms()
     {
-        float spawnTriggerY = _player.GlobalPosition.Y - LookAheadDistance;
+        var spawnTriggerY = _player.GlobalPosition.Y - LookAheadDistance;
 
         while (_lastPlatform.GlobalPosition.Y > spawnTriggerY || _platforms.Count < PlatformBuffer)
         {
-            float newPlatformY = _lastPlatform.GlobalPosition.Y -
-                                 _rnd.Next(MinPlatformDistance, MaxPlatformDistance + 1);
-
-            int minX = Mathf.Max((int)_lastPlatform.GlobalPosition.X - 100, PlatformLeftBoundary);
-            int maxX = Mathf.Min((int)_lastPlatform.GlobalPosition.X + 100, PlatformRightBoundary);
+            var newPlatformY = _lastPlatform.GlobalPosition.Y - _rnd.Next(MinPlatformDistance, MaxPlatformDistance + 1);
+            var minX = Mathf.Max((int)_lastPlatform.GlobalPosition.X - 100, PlatformLeftBoundary);
+            var maxX = Mathf.Min((int)_lastPlatform.GlobalPosition.X + 100, PlatformRightBoundary);
             float newPlatformX = _rnd.Next(minX, maxX + 1);
 
             _lastPlatform = SpawnPlatform(newPlatformX, newPlatformY);
         }
 
+        RemoveOldPlatforms();
+    }
+
+    private void RemoveOldPlatforms()
+    {
         while (_platforms.Count > 0 && _platforms[0].GlobalPosition.Y > _player.GlobalPosition.Y + 500)
         {
             _platforms[0].QueueFree();
@@ -127,20 +130,18 @@ public partial class GameController : Node
 
     private void InitializeBackground()
     {
-        _backgroundInstance0 = _backGroundScene.Instantiate() as Node2D;
-        _backgroundInstance1 = _backGroundScene.Instantiate() as Node2D;
-
-        _backgroundInstance0!.GlobalPosition = new Vector2I(0, 0);
-        _backgroundInstance1!.GlobalPosition = new Vector2I(0, 0 - BackgroundHeightInPixels);
-
-        AddChild(_backgroundInstance0);
-        AddChild(_backgroundInstance1);
+        for (var i = 0; i < 2; i++)
+        {
+            _backgroundInstances[i] = _backGroundScene.Instantiate() as Node2D;
+            _backgroundInstances[i]!.GlobalPosition = new Vector2I(0, -i * BackgroundHeightInPixels);
+            AddChild(_backgroundInstances[i]);
+        }
     }
 
     private void UpdateBackground()
     {
-        UpdateBackgroundPosition(_backgroundInstance0, _backgroundInstance1);
-        UpdateBackgroundPosition(_backgroundInstance1, _backgroundInstance0);
+        UpdateBackgroundPosition(_backgroundInstances[0], _backgroundInstances[1]);
+        UpdateBackgroundPosition(_backgroundInstances[1], _backgroundInstances[0]);
     }
 
     private void UpdateBackgroundPosition(Node2D background1, Node2D background2)
@@ -149,120 +150,65 @@ public partial class GameController : Node
 
         if (_player.GlobalPosition.Y < background2.GlobalPosition.Y - offset)
         {
-            background1.GlobalPosition = new Vector2(background1.GlobalPosition.X,
-                background2.GlobalPosition.Y - BackgroundHeightInPixels);
+            background1.GlobalPosition = new Vector2(background1.GlobalPosition.X, background2.GlobalPosition.Y - BackgroundHeightInPixels);
         }
         else if (_player.GlobalPosition.Y > background2.GlobalPosition.Y + offset)
         {
-            background1.GlobalPosition = new Vector2(background1.GlobalPosition.X,
-                background2.GlobalPosition.Y + BackgroundHeightInPixels);
+            background1.GlobalPosition = new Vector2(background1.GlobalPosition.X, background2.GlobalPosition.Y + BackgroundHeightInPixels);
         }
     }
 
     private void InitializeWalls()
     {
-        _leftWallInstance0 = _leftWallScene.Instantiate() as Node2D;
-        _leftWallInstance1 = _leftWallScene.Instantiate() as Node2D;
-        _leftWallInstance2 = _leftWallScene.Instantiate() as Node2D;
-        _rightWallInstance0 = _rightWallScene.Instantiate() as Node2D;
-        _rightWallInstance1 = _rightWallScene.Instantiate() as Node2D;
-        _rightWallInstance2 = _rightWallScene.Instantiate() as Node2D;
+        for (var i = 0; i < 3; i++)
+        {
+            _leftWallInstances[i] = _leftWallScene.Instantiate() as Node2D;
+            _rightWallInstances[i] = _rightWallScene.Instantiate() as Node2D;
 
-        _leftWallInstance0!.GlobalPosition = new Vector2I(-8 * TileSize, 0);
-        _leftWallInstance1!.GlobalPosition = new Vector2I(-8 * TileSize, 0 - WallHeightInPixels);
-        _leftWallInstance2!.GlobalPosition = new Vector2I(-8 * TileSize, 0 - WallHeightInPixels * 2);
-        _rightWallInstance0!.GlobalPosition = new Vector2I(31 * TileSize, 0);
-        _rightWallInstance1!.GlobalPosition = new Vector2I(31 * TileSize, 0 - WallHeightInPixels);
-        _rightWallInstance2!.GlobalPosition = new Vector2I(31 * TileSize, 0 - WallHeightInPixels * 2);
+            _leftWallInstances[i]!.GlobalPosition = new Vector2I(-8 * TileSize, -i * WallHeightInPixels);
+            _rightWallInstances[i]!.GlobalPosition = new Vector2I(31 * TileSize, -i * WallHeightInPixels);
 
-        AddChild(_leftWallInstance0);
-        AddChild(_leftWallInstance1);
-        AddChild(_leftWallInstance2);
-        AddChild(_rightWallInstance0);
-        AddChild(_rightWallInstance1);
-        AddChild(_rightWallInstance2);
+            AddChild(_leftWallInstances[i]);
+            AddChild(_rightWallInstances[i]);
+        }
     }
 
     private void UpdateWalls()
     {
-        var leftWallPositions = new List<float>
+        UpdateWallSide(_leftWallInstances);
+        UpdateWallSide(_rightWallInstances);
+    }
+
+    private void UpdateWallSide(Node2D[] walls)
+    {
+        var wallPositions = new List<float> { walls[0].GlobalPosition.Y, walls[1].GlobalPosition.Y, walls[2].GlobalPosition.Y };
+        wallPositions.Sort();
+
+        var highestWallY = wallPositions[0];
+        var lowestWallY = wallPositions[2];
+
+        if (_player.GlobalPosition.Y < highestWallY + WallHeightInPixels / 2)
         {
-            _leftWallInstance0.GlobalPosition.Y,
-            _leftWallInstance1.GlobalPosition.Y,
-            _leftWallInstance2.GlobalPosition.Y
-        };
-
-        var rightWallPositions = new List<float>
-        {
-            _rightWallInstance0.GlobalPosition.Y,
-            _rightWallInstance1.GlobalPosition.Y,
-            _rightWallInstance2.GlobalPosition.Y
-        };
-
-        leftWallPositions.Sort();
-        rightWallPositions.Sort();
-
-        var highestLeftWallY = leftWallPositions[0];
-        var lowestLeftWallY = leftWallPositions[2];
-        var highestRightWallY = rightWallPositions[0];
-        var lowestRightWallY = rightWallPositions[2];
-
-        // Handle left walls
-        if (_player.GlobalPosition.Y < highestLeftWallY + WallHeightInPixels / 2)
-        {
-            MoveWall(_leftWallInstance0, _leftWallInstance1, _leftWallInstance2, lowestRightWallY, highestRightWallY,
-                true);
+            MoveWall(walls[0], walls[1], walls[2], lowestWallY, highestWallY, true);
         }
-        else if (_player.GlobalPosition.Y > lowestLeftWallY - WallHeightInPixels / 2)
+        else if (_player.GlobalPosition.Y > lowestWallY - WallHeightInPixels / 2)
         {
-            MoveWall(_leftWallInstance0, _leftWallInstance1, _leftWallInstance2, lowestLeftWallY,
-                highestLeftWallY, false);
-        }
-
-        // Handle right walls
-        if (_player.GlobalPosition.Y < highestRightWallY + WallHeightInPixels / 2)
-        {
-            MoveWall(_rightWallInstance0, _rightWallInstance1, _rightWallInstance2, lowestRightWallY,
-                highestRightWallY, true);
-        }
-        else if (_player.GlobalPosition.Y > lowestRightWallY - WallHeightInPixels / 2)
-        {
-            MoveWall(_rightWallInstance0, _rightWallInstance1, _rightWallInstance2, lowestRightWallY,
-                highestRightWallY, false);
+            MoveWall(walls[0], walls[1], walls[2], lowestWallY, highestWallY, false);
         }
     }
 
-    private void MoveWall(Node2D wall0, Node2D wall1, Node2D wall2, float lowestWallY, float highestWallY,
-        bool moveAbove)
+    private void MoveWall(Node2D wall0, Node2D wall1, Node2D wall2, float lowestWallY, float highestWallY, bool moveAbove)
     {
         var newYPosition = moveAbove ? highestWallY - WallHeightInPixels : lowestWallY + WallHeightInPixels;
+        var targetY = moveAbove ? lowestWallY : highestWallY;
 
-        if (Math.Abs(wall0.GlobalPosition.Y - (moveAbove ? lowestWallY : highestWallY)) < 10)
-            wall0.GlobalPosition = new Vector2(wall0.GlobalPosition.X, newYPosition);
-        else if (Math.Abs(wall1.GlobalPosition.Y - (moveAbove ? lowestWallY : highestWallY)) < 10)
-            wall1.GlobalPosition = new Vector2(wall1.GlobalPosition.X, newYPosition);
-        else if (Math.Abs(wall2.GlobalPosition.Y - (moveAbove ? lowestWallY : highestWallY)) < 10)
-            wall2.GlobalPosition = new Vector2(wall2.GlobalPosition.X, newYPosition);
-    }
+        var wallToMove = new[] { wall0, wall1, wall2 }
+            .FirstOrDefault(w => Math.Abs(w.GlobalPosition.Y - targetY) < 10);
 
-    private int CalculateTilesFromPixels(int pixels)
-    {
-        return pixels / TileSize;
-    }
-
-    private int CalculatePixelsFromTiles(int tiles)
-    {
-        return tiles * TileSize;
-    }
-
-    private (double, double) GetPlayerPositionInTiles()
-    {
-        return (Math.Ceiling(_player.GlobalPosition.X / TileSize), Math.Ceiling(_player.GlobalPosition.Y / TileSize));
-    }
-
-    private bool IsPlayerGrounded()
-    {
-        return _player.IsOnFloor();
+        if (wallToMove != null)
+        {
+            wallToMove.GlobalPosition = new Vector2(wallToMove.GlobalPosition.X, newYPosition);
+        }
     }
 
     private void PlayerCanDieToggle()
@@ -275,9 +221,8 @@ public partial class GameController : Node
 
     private void KillPlayerIfTooLow()
     {
-        if (IsPlayerGrounded() && _player.GlobalPosition.Y > _lowestPlatformY && _playerCanDie)
+        if (_player.IsOnFloor() && _player.GlobalPosition.Y > _lowestPlatformY && _playerCanDie)
         {
-            // Emit signal that we can use to run function in PlayerController.cs (function is OnKillPlayer)
             EmitSignal(nameof(KillPlayerEventHandler));
         }
     }
