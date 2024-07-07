@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://xd40v0dtve6y"]
+[gd_scene load_steps=3 format=3 uid="uid://xd40v0dtve6y"]
 
 [ext_resource type="Script" path="res://Scripts/MainMenuController.cs" id="1_cddnp"]
+[ext_resource type="AudioStream" uid="uid://b5tg4b4prgf7y" path="res://Audio/general_soundtrack_original.mp3" id="2_4b22w"]
 
 [node name="MainMenu" type="Node"]
 script = ExtResource("1_cddnp")
@@ -34,6 +35,10 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 text = "UTB - Fakulta Aplikované Informatiky"
 vertical_alignment = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_4b22w")
+autoplay = true
 
 [connection signal="pressed" from="PanelContainer/GridContainer/StartGameButton" to="." method="_on_start_game_button_pressed"]
 [connection signal="pressed" from="PanelContainer/GridContainer/ExitGameButton" to="." method="_on_exit_game_button_pressed"]

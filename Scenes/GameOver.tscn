@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://hefa35xqjcbw"]
+[gd_scene load_steps=3 format=3 uid="uid://hefa35xqjcbw"]
 
 [ext_resource type="Script" path="res://Scripts/GameOverController.cs" id="1_ykf8v"]
+[ext_resource type="AudioStream" uid="uid://b5tg4b4prgf7y" path="res://Audio/general_soundtrack_original.mp3" id="2_d7f0j"]
 
 [node name="GameOver" type="Node"]
 script = ExtResource("1_ykf8v")
@@ -24,6 +25,10 @@ text = "Restart Game"
 [node name="ExitButton" type="Button" parent="PanelContainer/GridContainer"]
 layout_mode = 2
 text = "Exit Game"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_d7f0j")
+autoplay = true
 
 [connection signal="pressed" from="PanelContainer/GridContainer/RestartButton" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="PanelContainer/GridContainer/ExitButton" to="." method="_on_exit_button_pressed"]
