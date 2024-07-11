@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "VNGa5iEQLAw/5+7UeyGf0TMi9CGwvEPk74U8A0/luJIS/cjhOK1qH+fOTIPctSHKrQZfgjAWxOCWNqcSRqw8Dg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\petrz\\Documents\\UTB\\AK8PO-UTB-game\\AK8PO-UTB-game.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\petrz\\.nuget\\packages\\godot.sourcegenerators\\4.2.2\\godot.sourcegenerators.4.2.2.nupkg.sha512",
+    "C:\\Users\\petrz\\.nuget\\packages\\godotsharp\\4.2.2\\godotsharp.4.2.2.nupkg.sha512",
+    "C:\\Users\\petrz\\.nuget\\packages\\godotsharpeditor\\4.2.2\\godotsharpeditor.4.2.2.nupkg.sha512",
+    "C:\\Users\\petrz\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\petrz\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\petrz\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512"
+  ],
+  "logs": []
+}

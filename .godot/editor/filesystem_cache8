@@ -1,0 +1,36 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1720349247
+icon.svg::CompressedTexture2D::7709897432373895248::1716628514::1716628521::1::::<><>::
+::res://Audio/::1720349913
+general_soundtrack_original.mp3::AudioStreamMP3::4531725358168219084::1720349256::1720350091::1::::<><>::
+loopable_playing_soundtrack.mp3::AudioStreamMP3::8643906518922999169::1720349819::1720349913::1::::<><>::
+playing_soundtrack_edited.mp3::AudioStreamMP3::3642523936765400538::1720349241::1720349510::1::::<><>::
+::res://Documents/::1718303478
+agilePlan.md::TextFile::-1::1716736436::0::1::::<><>::
+idea.md::TextFile::-1::1718303478::0::1::::<><>::
+resources.md::TextFile::-1::1716736533::0::1::::<><>::
+::res://Prefabs/::1718206523
+background_tile_map.tscn::PackedScene::610702013531493962::1718206522::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+left_wall.tscn::PackedScene::6181435386877994384::1718206522::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+platform_1.tscn::PackedScene::140059904086094806::1718206522::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+platform_2.tscn::PackedScene::7699913982303710976::1718206523::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+right_wall.tscn::PackedScene::3728854024082257126::1718206522::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+starting_platform.tscn::PackedScene::1851028531728632554::1717099108::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+::res://Scenes/::1720350030
+Background.tscn::PackedScene::8336672841675361898::1716923452::0::1::::<><>::uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+Game-UI.tscn::PackedScene::6479230271296800487::1720350030::0::1::::<><>::res://Scripts/ScoreController.cs
+GameOver.tscn::PackedScene::499884519510986856::1720350030::0::1::::<><>::res://Scripts/GameOverController.cs
+Main.tscn::PackedScene::4036508071667281104::1720350030::0::1::::<><>::uid://b2mqqhud0onav::::res://Scenes/Player.tscn<>res://Scripts/GameController.cs<>uid://cykt8ggm6fupb::::res://Scenes/Game-UI.tscn<>uid://dvff43mk6kkn6::::res://Audio/loopable_playing_soundtrack.mp3<>uid://1mwf06g1qiuc::::res://Prefabs/starting_platform.tscn<>uid://dhw23heptlji::::res://Sprites/Dungeon Tile Set.png
+MainMenu.tscn::PackedScene::1622343116347765182::1720350030::0::1::::<><>::res://Scripts/MainMenuController.cs
+Player.tscn::PackedScene::4307292438285253801::1720350030::0::1::::<><>::res://Scripts/PlayerController.cs<>uid://xpabkc0jye1o::::res://Sprites/AnimationSheet_Character.png<>res://Scripts/CameraController.cs<>uid://d21rg1ytscc6d::::res://Sprites/Character_Sheet_Right.png
+UI.tscn::PackedScene::8968131279365714762::1716739488::0::1::::<><>::
+::res://Scripts/::1720279827
+CameraController.cs::CSharpScript::-1::1718210435::0::1::::<>Camera2D<>::
+GameController.cs::CSharpScript::-1::1720279827::0::1::::<>Node<>::
+GameOverController.cs::CSharpScript::-1::1718217546::0::1::::<>Node<>::
+MainMenuController.cs::CSharpScript::-1::1718217546::0::1::::<>Node<>::
+PlayerController.cs::CSharpScript::-1::1718217233::0::1::::<>CharacterBody2D<>::
+ScoreController.cs::CSharpScript::-1::1718209912::0::1::::<>Node<>::
+::res://Sprites/::1717239778
+Character_Sheet_Right.png::CompressedTexture2D::9109078958122009785::1716738982::1716832771::1::::<><>::
+Dungeon Tile Set.png::CompressedTexture2D::226402647138791470::1716736828::1716736828::1::::<><>::

@@ -1,0 +1,11 @@
+res://Scenes/MainMenu.tscn
+res://Scenes/Main.tscn
+res://Scenes/Game-UI.tscn
+res://Scenes/GameOver.tscn
+res://Scenes/Player.tscn
+res://Scripts/CameraController.cs
+res://Scripts/ScoreController.cs
+res://Scripts/GameOverController.cs
+res://Scripts/MainMenuController.cs
+res://Scripts/GameController.cs
+res://Scripts/PlayerController.cs
